@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+	<h1>Salary Conversion</h1>
+	<pre id="myText"></pre>
+	<script>
+		// get users data
+		const users_url = "http://jsonplaceholder.typicode.com/users";
+
+		function getvals() {
+			return fetch(users_url,
+				{
+					method: "GET",
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json',
+					},
+				})
+				.then((response) => response.json())
+				.then((responseData) => {
+					console.log(responseData);
+					return responseData;
+				})
+				.catch(error => console.warn(error));
+		}
+
+		users_data = getvals().then(response => {return response});
+
+		console.log(users_data);
+
+		var str = JSON.stringify(users_data, null, 2);
+		document.getElementById("myText").innerHTML = JSON.stringify(users_data, null, 4);
+	</script>
+
+</body>
+
+</html>
