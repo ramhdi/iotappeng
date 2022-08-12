@@ -6,38 +6,11 @@
 	<title>Sensor Simulation</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-	<style>
-		table,
-		th,
-		td {
-			border: solid 1px #000000;
-			border-collapse: collapse;
-			padding: 2px 3px;
-			text-align: center;
-		}
-
-		th {
-			font-weight: bold;
-		}
-
-		.column {
-			float: left;
-			width: 50%;
-		}
-
-		/* Clear floats after the columns */
-		.row:after {
-			content: "";
-			display: table;
-			clear: both;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" href="3_sensor-simulation.css"/>
 </head>
 
 <body>
 	<h2>Sensor Simulation</h2>
-
-	<div id="dateselect"></div>
 
 	<p>
 		<input type="button" onclick="startGenerate()" value="Start" />
@@ -46,322 +19,71 @@
 
 	<div class="row">
 		<h3>Room 1</h3>
+		<b>Room 1 JSON response:</b>
 		<p id="room1json"></p>
 		<div class="column">
 			<h3>Temperature</h3>
 			<canvas id="showTemp1" style="max-width:600px;max-height:300px"></canvas>
+			<div class="column" id="room1tempmax"></div>
+			<div class="column" id="room1tempmed"></div>
+			<div class="column" id="room1tempmin"></div>
+			<div class="column" id="room1tempavg"></div>
 		</div>
 		<div class="column">
 			<h3>Humidity</h3>
 			<canvas id="showHum1" style="max-width:600px;max-height:300px"></canvas>
+			<div class="column" id="room1hummax"></div>
+			<div class="column" id="room1hummed"></div>
+			<div class="column" id="room1hummin"></div>
+			<div class="column" id="room1humavg"></div>
 		</div>
 	</div>
 
 	<div class="row">
 		<h3>Room 2</h3>
+		<b>Room 2 JSON response:</b>
 		<p id="room2json"></p>
 		<div class="column">
 			<h3>Temperature</h3>
 			<canvas id="showTemp2" style="max-width:600px;max-height:300px"></canvas>
+			<div class="column" id="room2tempmax"></div>
+			<div class="column" id="room2tempmed"></div>
+			<div class="column" id="room2tempmin"></div>
+			<div class="column" id="room2tempavg"></div>
 		</div>
 		<div class="column">
 			<h3>Humidity</h3>
 			<canvas id="showHum2" style="max-width:600px;max-height:300px"></canvas>
+			<div class="column" id="room2hummax"></div>
+			<div class="column" id="room2hummed"></div>
+			<div class="column" id="room2hummin"></div>
+			<div class="column" id="room2humavg"></div>
 		</div>
 	</div>
 
 	<div class="row">
 		<h3>Room 3</h3>
+		<b>Room 3 JSON response:</b>
 		<p id="room3json"></p>
 		<div class="column">
 			<h3>Temperature</h3>
 			<canvas id="showTemp3" style="max-width:600px;max-height:300px"></canvas>
+			<div class="column" id="room3tempmax"></div>
+			<div class="column" id="room3tempmed"></div>
+			<div class="column" id="room3tempmin"></div>
+			<div class="column" id="room3tempavg"></div>
 		</div>
 		<div class="column">
 			<h3>Humidity</h3>
 			<canvas id="showHum3" style="max-width:600px;max-height:300px"></canvas>
+			<div class="column" id="room3hummax"></div>
+			<div class="column" id="room3hummed"></div>
+			<div class="column" id="room3hummin"></div>
+			<div class="column" id="room3humavg"></div>
 		</div>
 	</div>
 
-
-
-	<script>
-		// math functions
-		const median = arr => {
-			const mid = Math.floor(arr.length / 2),
-				nums = [...arr].sort((a, b) => a - b);
-			return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
-		};
-
-		const average = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
-
-		var id = []
-		var time = []
-
-		var room1_temp = []
-		var room1_hum = []
-		var room2_temp = []
-		var room2_hum = []
-		var room3_temp = []
-		var room3_hum = []
-
-		const period = 2000;
-		var generate = null;
-		var i = 0;
-
-		// generate temperature chart room 1
-		temp_charts1 = document.getElementById("showTemp1");//html canvas
-		temp_chart1 = new Chart(temp_charts1, {
-			type: 'line', //Declare bar chart
-			data: {
-				labels: time, //x-axes data 
-				datasets: [{
-					label: "Temperature",
-					data: room1_temp, //y-axes data 
-					borderColor: 'rgb(192, 75, 75)',
-				}]
-			},
-			options: {
-				responsive: true,
-				legend: { display: false },
-				scales: {
-					y: {
-						display: true,
-						min: 0,
-						max: 100
-					}
-				}
-			}
-		});
-
-		// generate temperature chart room 2
-		temp_charts2 = document.getElementById("showTemp2");//html canvas
-		temp_chart2 = new Chart(temp_charts2, {
-			type: 'line', //Declare bar chart
-			data: {
-				labels: time, //x-axes data 
-				datasets: [{
-					label: "Temperature",
-					data: room2_temp, //y-axes data 
-					borderColor: 'rgb(192, 75, 75)',
-				}]
-			},
-			options: {
-				responsive: true,
-				legend: { display: false },
-				scales: {
-					y: {
-						display: true,
-						min: 0,
-						max: 100
-					}
-				}
-			}
-		});
-
-		// generate temperature chart room 3
-		temp_charts3 = document.getElementById("showTemp3");//html canvas
-		temp_chart3 = new Chart(temp_charts3, {
-			type: 'line', //Declare bar chart
-			data: {
-				labels: time, //x-axes data 
-				datasets: [{
-					label: "Temperature",
-					data: room3_temp, //y-axes data 
-					borderColor: 'rgb(192, 75, 75)',
-				}]
-			},
-			options: {
-				responsive: true,
-				legend: { display: false },
-				scales: {
-					y: {
-						display: true,
-						min: 0,
-						max: 100
-					}
-				}
-			}
-		});
-
-		// generate humidity chart room 1
-		hum_charts1 = document.getElementById("showHum1");//html canvas
-		hum_chart1 = new Chart(hum_charts1, {
-			type: 'line', //Declare bar chart
-			data: {
-				labels: time, //x-axes data 
-				datasets: [{
-					label: "Humidity",
-					data: room1_hum, //y-axes data 
-					borderColor: 'rgb(75, 192, 192)',
-				}]
-			},
-			options: {
-				responsive: true,
-				legend: { display: false },
-				scales: {
-					y: {
-						display: true,
-						min: 0,
-						max: 100
-					}
-				}
-			}
-		});
-
-		// generate humidity chart room 2
-		hum_charts2 = document.getElementById("showHum2");//html canvas
-		hum_chart2 = new Chart(hum_charts2, {
-			type: 'line', //Declare bar chart
-			data: {
-				labels: time, //x-axes data 
-				datasets: [{
-					label: "Humidity",
-					data: room2_hum, //y-axes data 
-					borderColor: 'rgb(75, 192, 192)',
-				}]
-			},
-			options: {
-				responsive: true,
-				legend: { display: false },
-				scales: {
-					y: {
-						display: true,
-						min: 0,
-						max: 100
-					}
-				}
-			}
-		});
-
-		// generate humidity chart room 3
-		hum_charts3 = document.getElementById("showHum3");//html canvas
-		hum_chart3 = new Chart(hum_charts3, {
-			type: 'line', //Declare bar chart
-			data: {
-				labels: time, //x-axes data 
-				datasets: [{
-					label: "Humidity",
-					data: room3_hum, //y-axes data 
-					borderColor: 'rgb(75, 192, 192)',
-				}]
-			},
-			options: {
-				responsive: true,
-				legend: { display: false },
-				scales: {
-					y: {
-						display: true,
-						min: 0,
-						max: 100
-					}
-				}
-			}
-		});
-
-		// generate random
-		function generateRandom() {
-			time_n = Date.now();
-			timedate_n = (new Date(time_n)).toLocaleTimeString();
-
-			// generate data room 1
-			room1_id_n = i;
-			room1_temp_n = Math.random() * 100;
-			room1_hum_n = Math.random() * 100;
-
-			var room1_msg = {
-				"temperature": room1_temp_n,
-				"humidity": room1_hum_n,
-				"roomArea": "roomArea1",
-				"id": room1_id_n,
-				"timestamp": time_n
-			}
-			document.getElementById("room1json").innerHTML = JSON.stringify(room1_msg);
-			i++;
-
-			// generate data room 2
-			room2_id_n = i;
-			room2_temp_n = Math.random() * 100;
-			room2_hum_n = Math.random() * 100;
-
-			var room2_msg = {
-				"temperature": room2_temp_n,
-				"humidity": room2_hum_n,
-				"roomArea": "roomArea2",
-				"id": room2_id_n,
-				"timestamp": time_n
-			}
-			document.getElementById("room2json").innerHTML = JSON.stringify(room2_msg);
-			i++;
-
-			// generate data room 3
-			room3_id_n = i;
-			room3_temp_n = Math.random() * 100;
-			room3_hum_n = Math.random() * 100;
-
-			var room3_msg = {
-				"temperature": room3_temp_n,
-				"humidity": room3_hum_n,
-				"roomArea": "roomArea3",
-				"id": room3_id_n,
-				"timestamp": time_n
-			}
-			document.getElementById("room3json").innerHTML = JSON.stringify(room3_msg);
-			i++;
-
-			// update temperature chart room 1
-			temp_chart1.data.labels.push(timedate_n);
-			temp_chart1.data.datasets.forEach((dataset) => {
-				dataset.data.push(room1_temp_n);
-			});
-			temp_chart1.update();
-
-			// update temperature chart room 2
-			//temp_chart2.data.labels.push(timedate_n);
-			temp_chart2.data.datasets.forEach((dataset) => {
-				dataset.data.push(room2_temp_n);
-			});
-			temp_chart2.update();
-
-			// update temperature chart room 3
-			//temp_chart3.data.labels.push(timedate_n);
-			temp_chart3.data.datasets.forEach((dataset) => {
-				dataset.data.push(room3_temp_n);
-			});
-			temp_chart3.update();
-
-			// update humidity chart room 1
-			//hum_chart1.data.labels.push(timedate_n);
-			hum_chart1.data.datasets.forEach((dataset) => {
-				dataset.data.push(room1_hum_n);
-			});
-			hum_chart1.update();
-
-			// update humidity chart room 2
-			//hum_chart2.data.labels.push(timedate_n);
-			hum_chart2.data.datasets.forEach((dataset) => {
-				dataset.data.push(room2_hum_n);
-			});
-			hum_chart2.update();
-
-			// update humidity chart room 3
-			//hum_chart3.data.labels.push(timedate_n);
-			hum_chart3.data.datasets.forEach((dataset) => {
-				dataset.data.push(room3_hum_n);
-			});
-			hum_chart3.update();
-		}
-
-		function startGenerate() {
-			if (generate == null) {
-				generate = setInterval(generateRandom, period);
-			}
-		}
-		function stopGenerate() {
-			clearInterval(generate);
-			generate = null;
-		}
-	</script>
+	<script src="3_sensor-simulation.js"></script>
 </body>
 
 </html>
