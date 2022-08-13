@@ -1,0 +1,23 @@
+table,
+th,
+td {
+	border: solid 1px #000000;
+	border-collapse: collapse;
+	padding: 2px 3px;
+	text-align: center;
+}
+
+th {
+	font-weight: bold;
+}
+
+.column {
+  float: left;
+  width: 50%;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
