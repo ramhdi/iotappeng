@@ -7,7 +7,7 @@ There are three applications in this submission:
 
 All apps are developed using HTML, CSS, and JavaScript. No dependencies are needed to be installed before using the apps.
 
-To open the app, just open (double-click) the HTML file of the app, The app will be automatically loaded in a browser. Any browser that supports JavaScript can be used.
+To open the app, just open (double-click) the HTML file of the app, The app will be automatically loaded in a browser. Any browser that supports JavaScript can be used. Please note that all HTML, CSS, and JavaScript files need to be placed in the same directory.
 
 ## Limitations
 Due to CORS restriction that is imposed for security reasons, the browser cannot read from or write to local JSON files. Therefore, to read given JSON files, the files are hosted on the internet (in this case, my personal GitHub page).
