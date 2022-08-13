@@ -1,5 +1,18 @@
+/*
+	Salary Conversion
+
+	Fetch JSON files containing user data and salary in IDR,
+	join the data and convert salary to USD,
+	display the data as table
+
+	Rama Rahardi, 11/08/2022
+	rahardi6699@gmail.com
+*/
+
 // get salary data json
 var salary_data = $.ajax({
+	// due to CORS restriction, the JSON needs to be hosted on the internet
+	// in this case, my personal Github
 	url: "https://ramhdi.github.io/json/salary_data.json",
 	async: false,
 	dataType: 'json'
@@ -69,6 +82,7 @@ for (var i = 0; i < users_data_usd.length; i++) {
 		var tabCell = tr.insertCell(-1);
 
 		switch (j) {
+			// display address according to specified format
 			case 4:
 				addr = users_data_usd[i].address.street + ", "
 					+ users_data_usd[i].address.suite + ", "
@@ -77,10 +91,12 @@ for (var i = 0; i < users_data_usd.length; i++) {
 				tabCell.innerHTML = addr;
 				break;
 
+			// display salary IDR, rounding to 2 decimal places
 			case 6:
 				tabCell.innerHTML = users_data_usd[i][col[j]].toFixed(2);
 				break;
 
+			// display salary USD, rounding to 2 decimal places
 			case 7:
 				tabCell.innerHTML = users_data_usd[i][col[j]].toFixed(2);
 				break;
